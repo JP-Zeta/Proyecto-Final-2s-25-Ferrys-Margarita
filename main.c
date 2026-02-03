@@ -12,12 +12,37 @@ typedef struct {
     int tipo_ferry;
 } TVehiculo;
 
+typedef struct {
+    char nombre[30];
+    int tipo;          // 0: Express, 1: Tradicional
+    int cap_v;         // Capacidad vehiculos (16, 20 o 18)
+    int cap_p;         // Capacidad pasajeros (50, 70 o 60)
+    float peso_max;    // 60.0 o 80.0 Toneladas
+    int tiempo_viaje;  // <--- ¡NUEVO! (35 o 65 min)
+    
+    // Variables de control de la carga actual (se reinician en cada viaje)
+    int v_actuales;
+    int p_actuales;
+    float peso_actual;
+    
+    int estado;        // 1: Carga, 2: Viaje, 3: Espera
+    int tiempo_restante_viaje; // Opcional: para saber cuánto le falta para volver
+} TFerry;
+
 int main() {
     int orden[3];
-    TVehiculo colaExpress[100];
-    TVehiculo colaTradicional[100];
     int contExpress = 0;
     int contTradicional = 0;
+    TVehiculo colaExpress[100];
+    TVehiculo colaTradicional[100];
+
+    // Inicialización manual de los 3 ferrys
+    TFerry flota[3] = {
+        // Nombre, Tipo, CV, CP, P_Max, T_Viaje, V_Act, P_Act, Peso_Act, Estado
+        {"Lilia Concepcion", 0, 16, 50, 60.0, 35, 0, 0, 0.0, 3},
+        {"La Isabela",       1, 20, 70, 80.0, 65, 0, 0, 0.0, 3},
+        {"La Margariteña",   1, 18, 60, 80.0, 65, 0, 0, 0.0, 3}
+    };
 
     FILE *entrada = fopen("proy1.in", "r");
     if (entrada == NULL) {
@@ -35,6 +60,9 @@ int main() {
            &v_aux.cod, &v_aux.npa, &v_aux.npt, &v_aux.tpa, 
            &v_aux.tpt, &v_aux.peso, &v_aux.hora, v_aux.placa, 
            &v_aux.tipo_ferry) != EOF) {
+
+        //Comprobando leectura de datos.
+        //printf("%d %d %d %d %d %d %d %s %d \n", v_aux.cod, v_aux.npa, v_aux.npt, v_aux.tpa, v_aux.tpt, v_aux.peso, v_aux.hora, v_aux.placa, v_aux.tipo_ferry);
 
         // 3. Clasificación según el tipo de ferry (f) [cite: 130]
         if (v_aux.tipo_ferry == 0) {
